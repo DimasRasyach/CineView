@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent SignIn = new Intent(MainActivity.this, SignIn.class);
                 startActivity(SignIn);
                 finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         },waktu_loading);
     }
