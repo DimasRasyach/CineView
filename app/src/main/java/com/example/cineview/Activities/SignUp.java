@@ -21,6 +21,8 @@ import com.example.cineview.api.ApiService;
 import com.example.cineview.models.ApiResponse;
 import com.example.cineview.models.RegisterRequest;
 
+import java.io.IOException;
+
 import retrofit2.Callback;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -98,7 +100,13 @@ public class SignUp extends AppCompatActivity {
                         Toast.makeText(SignUp.this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show();
                         finish(); // kembali ke login
                     } else {
-                        Toast.makeText(SignUp.this, "Registrasi gagal!", Toast.LENGTH_SHORT).show();
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Log.e("API", "Error body: " + errorBody);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(SignUp.this, "Registrasi gagal: " + response.code(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
