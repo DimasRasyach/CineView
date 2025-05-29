@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -16,7 +17,10 @@ import android.view.ViewGroup;
 
 import com.example.cineview.R;
 import com.example.cineview.adapter.ImageSliderAdapter;
+import com.example.cineview.adapter.MovieCardAdapter;
 import com.example.cineview.adapter.TopRatingAdapter;
+import com.example.cineview.design.GridSpacingItemDecoration;
+import com.example.cineview.models.MovieItem;
 import com.example.cineview.models.TopRatingModel;
 
 import java.util.ArrayList;
@@ -85,14 +89,23 @@ public class Home extends Fragment {
         recyclerView.setAdapter(adapter2);
 
         recyclerView.setNestedScrollingEnabled(false);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (recyclerView != null) {
-            recyclerView.invalidate();
-            recyclerView.getAdapter().notifyDataSetChanged();
-        }
+        RecyclerView trendRecycler = view.findViewById(R.id.recommendedRecycler);
+        List<MovieItem> trendMovies = new ArrayList<>();
+        trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 1", "4.9"));
+        trendMovies.add(new MovieItem(R.drawable.gambar2, "Judul 2", "4.7"));
+        trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 1", "4.9"));
+        trendMovies.add(new MovieItem(R.drawable.gambar2, "Judul 2", "4.7"));
+
+        MovieCardAdapter trendAdapter = new MovieCardAdapter(getContext(), trendMovies);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        trendRecycler.setLayoutManager(gridLayoutManager);
+        trendRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
+        trendRecycler.setAdapter(trendAdapter);
+
+        trendRecycler.post(() -> {
+            trendRecycler.invalidate();
+            trendRecycler.requestLayout();
+        });
     }
 }

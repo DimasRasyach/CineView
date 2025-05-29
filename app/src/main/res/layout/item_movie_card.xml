@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="160dp"
+    android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_marginEnd="12dp"
+    app:cardCornerRadius="9dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="0dp"
+    android:backgroundTint="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imagePoster"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/foto"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance_RoundedImage" />
+
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Judul"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/inter_medium" />
+
+        <TextView
+            android:id="@+id/textRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rating"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_medium" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/star"
+                />
+
+            <TextView
+                android:id="@+id/textRatingValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4.9"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
