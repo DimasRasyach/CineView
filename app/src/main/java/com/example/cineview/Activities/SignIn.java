@@ -24,7 +24,6 @@ import com.example.cineview.api.ApiService;
 import com.example.cineview.models.ApiResponse;
 import com.example.cineview.models.LoginRequest;
 
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
