@@ -36,6 +36,8 @@ android {
 
 dependencies {
 
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.navigation:navigation-fragment:2.8.9")
     implementation("androidx.navigation:navigation-ui:2.8.9")
     implementation("de.hdodenhof:circleimageview:3.1.0")

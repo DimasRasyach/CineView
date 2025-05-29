@@ -31,17 +31,14 @@ public class Profile extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Ambil referensi dari layout
         View optionsContainer = view.findViewById(R.id.optionsContainer);
         View gradientView = view.findViewById(R.id.gradientView);
 
-        // Set posisi awal di bawah dan transparan
         optionsContainer.setTranslationY(300f);
         optionsContainer.setAlpha(0f);
         gradientView.setTranslationY(300f);
         gradientView.setAlpha(0f);
 
-        // Jalankan animasi slide up
         optionsContainer.animate()
                 .translationY(0f)
                 .alpha(1f)
@@ -53,7 +50,7 @@ public class Profile extends Fragment {
                 .translationY(0f)
                 .alpha(1f)
                 .setDuration(500)
-                .setStartDelay(100) // Optional: beri delay agar muncul setelahnya
+                .setStartDelay(100)
                 .setInterpolator(new DecelerateInterpolator())
                 .start();
     }
