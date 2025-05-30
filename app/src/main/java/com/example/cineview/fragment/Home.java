@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -88,8 +89,6 @@ public class Home extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter2);
 
-        recyclerView.setNestedScrollingEnabled(false);
-
         RecyclerView trendRecycler = view.findViewById(R.id.recommendedRecycler);
         List<MovieItem> trendMovies = new ArrayList<>();
         trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 1", "4.9"));
@@ -103,9 +102,5 @@ public class Home extends Fragment {
         trendRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
         trendRecycler.setAdapter(trendAdapter);
 
-        trendRecycler.post(() -> {
-            trendRecycler.invalidate();
-            trendRecycler.requestLayout();
-        });
     }
 }
