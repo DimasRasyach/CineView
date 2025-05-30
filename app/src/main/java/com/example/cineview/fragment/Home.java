@@ -101,6 +101,5 @@ public class Home extends Fragment {
         trendRecycler.setLayoutManager(gridLayoutManager);
         trendRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
         trendRecycler.setAdapter(trendAdapter);
-
     }
 }
