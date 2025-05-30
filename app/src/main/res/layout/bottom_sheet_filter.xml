@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottomsheet_filter">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="16dp">
+
+            <!-- Genre Section -->
+            <LinearLayout
+                android:id="@+id/sectionGenreHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:text="Genre"
+                    style="@style/FilterSectionTitle"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/arrowGenre"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/filterbutton" />
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupGenre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:chipSpacing="8dp"
+                app:singleSelection="true"
+                android:visibility="gone" />
+
+            <!-- Date Section -->
+            <LinearLayout
+                android:id="@+id/sectionDateHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:text="Tanggal Rilis"
+                    style="@style/FilterSectionTitle"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/arrowDate"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/filterbutton" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutDatePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/editReleaseDate"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="40dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:hint="dd/mm/yy"
+                    android:background="@drawable/edittext_background"
+                    android:paddingHorizontal="12dp"
+                    android:focusable="false"
+                    android:clickable="true" />
+
+                <ImageView
+                    android:src="@drawable/calendar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <!-- Actor Section -->
+            <LinearLayout
+                android:id="@+id/sectionActorHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:text="Aktor"
+                    style="@style/FilterSectionTitle"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/arrowActor"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/filterbutton" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutActorSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/editActor"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="40dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:hint="Nama aktor"
+                    android:background="@drawable/edittext_background"
+                    android:paddingHorizontal="12dp" />
+
+                <ImageView
+                    android:src="@drawable/search"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <!-- Order Section -->
+            <LinearLayout
+                android:id="@+id/sectionOrderHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:text="Urutan"
+                    style="@style/FilterSectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:id="@+id/arrowOrder"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/filterbutton" />
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupOrder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:chipSpacing="8dp"
+                app:singleSelection="true"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
