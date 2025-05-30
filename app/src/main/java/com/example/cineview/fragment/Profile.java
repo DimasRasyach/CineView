@@ -1,5 +1,6 @@
 package com.example.cineview.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
+import com.example.cineview.Activities.SignIn;
 import com.example.cineview.R;
 
 
@@ -53,5 +56,11 @@ public class Profile extends Fragment {
                 .setStartDelay(100)
                 .setInterpolator(new DecelerateInterpolator())
                 .start();
+
+
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.optionsContainer, new ProfileOptionsFragment())
+                .commit();
     }
 }

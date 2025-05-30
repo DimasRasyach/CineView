@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Are you sure to logout ?"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/inter_medium"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnLogoutConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="YES, Log Me Out"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        style="@style/ButtonStyle"
+        android:fontFamily="@font/inter_medium"
+        android:backgroundTint="#E53935"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btnLogoutCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nah. Just Kidding"
+        android:textAllCaps="false"
+        android:fontFamily="@font/inter_medium"
+        android:textColor="#E53935"
+        android:backgroundTint="#FFFFFF"
+        style="@style/ButtonStyle"/>
+</LinearLayout>
