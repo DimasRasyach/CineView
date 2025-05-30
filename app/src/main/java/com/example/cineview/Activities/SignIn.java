@@ -24,7 +24,6 @@ import com.example.cineview.api.ApiService;
 import com.example.cineview.models.ApiResponse;
 import com.example.cineview.models.LoginRequest;
 
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -92,6 +91,7 @@ public class SignIn extends AppCompatActivity {
                             Intent intent = new Intent(SignIn.this, MainActivity.class);
                             startActivity(intent);
                             finish();
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                         } else {
                             // Jika email atau password salah
                             Toast.makeText(SignIn.this, apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
@@ -110,7 +110,6 @@ public class SignIn extends AppCompatActivity {
                 }
             });
         });
-
 
         TextView tvRegister = findViewById(R.id.tvRegister);
         tvRegister.setOnClickListener(v -> {
