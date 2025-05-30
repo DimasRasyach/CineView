@@ -3,8 +3,12 @@ package com.example.cineview.fragment;
 import android.app.DatePickerDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +21,23 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.cineview.R;
+import com.example.cineview.adapter.MovieAdapter;
+import com.example.cineview.models.MovieItem;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Search extends Fragment {
+
+    private RecyclerView recyclerView;
+    private EditText searchEditText;
+    private TextView textResultCount;
+
+    private MovieAdapter movieAdapter;
+    private List<MovieItem> movieList;
+    private List<MovieItem> filteredList;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,9 +50,33 @@ public class Search extends Fragment {
         Button btnFilter = view.findViewById(R.id.btnFilter);
         Button btnSort = view.findViewById(R.id.btnSort);
 
+        searchEditText = view.findViewById(R.id.searchEditText);
+        recyclerView = view.findViewById(R.id.searchResultRecyclerView);
+        textResultCount = view.findViewById(R.id.textResultCount);
+
         btnFilter.setOnClickListener(v -> showFilterPopup(btnFilter));
         btnSort.setOnClickListener(v -> showSortPopup(btnSort));
 
+        // Inisialisasi RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        movieList = getDummyMovies();
+        filteredList = new ArrayList<>(movieList);
+
+        movieAdapter = new MovieAdapter(requireContext(), filteredList);
+        recyclerView.setAdapter(movieAdapter);
+
+        updateResultCount();
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterMovies(s.toString());
+            }
+            @Override public void afterTextChanged(Editable s) { }
+        });
+
+        recyclerView.setVisibility(View.GONE);
+        textResultCount.setVisibility(View.GONE);
         return view;
     }
 
@@ -52,10 +94,14 @@ public class Search extends Fragment {
         TextView sortZa = popupView.findViewById(R.id.sortZa);
 
         sortAz.setOnClickListener(v -> {
+            Collections.sort(filteredList, (movie1, movie2) -> movie1.getTitle().compareToIgnoreCase(movie2.getTitle()));
+            movieAdapter.notifyDataSetChanged();
             popupWindow.dismiss();
         });
 
         sortZa.setOnClickListener(v -> {
+            Collections.sort(filteredList, (movie1, movie2) -> movie2.getTitle().compareToIgnoreCase(movie1.getTitle()));
+            movieAdapter.notifyDataSetChanged();
             popupWindow.dismiss();
         });
 
@@ -65,7 +111,7 @@ public class Search extends Fragment {
     private void showFilterPopup(View anchorView) {
         View popupView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_filter, null);
 
-        PopupWindow popupWindow = new PopupWindow(
+        final PopupWindow popupWindow = new PopupWindow(
                 popupView,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -74,30 +120,16 @@ public class Search extends Fragment {
 
         popupWindow.setBackgroundDrawable(new ColorDrawable());
         popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
         popupWindow.setElevation(20f);
 
+        // -- Setup Expandable Sections --
+        setupExpandableSection(popupView, R.id.sectionGenreHeader, R.id.chipGroupGenre, R.id.arrowGenre);
+        setupExpandableSection(popupView, R.id.sectionDateHeader, R.id.layoutDatePicker, R.id.arrowDate);
+        setupExpandableSection(popupView, R.id.sectionActorHeader, R.id.layoutActorSearch, R.id.arrowActor);
+        setupExpandableSection(popupView, R.id.sectionOrderHeader, R.id.chipGroupOrder, R.id.arrowOrder);
 
-        LinearLayout sectionGenreHeader = popupView.findViewById(R.id.sectionGenreHeader);
-        View chipGroupGenre = popupView.findViewById(R.id.chipGroupGenre);
-        ImageView arrowGenre = popupView.findViewById(R.id.arrowGenre);
-
-        LinearLayout sectionDateHeader = popupView.findViewById(R.id.sectionDateHeader);
-        View layoutDatePicker = popupView.findViewById(R.id.layoutDatePicker);
-        ImageView arrowDate = popupView.findViewById(R.id.arrowDate);
-
-        LinearLayout sectionActorHeader = popupView.findViewById(R.id.sectionActorHeader);
-        View layoutActorSearch = popupView.findViewById(R.id.layoutActorSearch);
-        ImageView arrowActor = popupView.findViewById(R.id.arrowActor);
-
-        LinearLayout sectionOrderHeader = popupView.findViewById(R.id.sectionOrderHeader);
-        View chipGroupOrder = popupView.findViewById(R.id.chipGroupOrder);
-        ImageView arrowOrder = popupView.findViewById(R.id.arrowOrder);
-
-        sectionGenreHeader.setOnClickListener(v -> toggleSection(chipGroupGenre, arrowGenre));
-        sectionDateHeader.setOnClickListener(v -> toggleSection(layoutDatePicker, arrowDate));
-        sectionActorHeader.setOnClickListener(v -> toggleSection(layoutActorSearch, arrowActor));
-        sectionOrderHeader.setOnClickListener(v -> toggleSection(chipGroupOrder, arrowOrder));
-
+        // -- Setup Date Picker --
         EditText editReleaseDate = popupView.findViewById(R.id.editReleaseDate);
         editReleaseDate.setOnClickListener(v -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -111,18 +143,64 @@ public class Search extends Fragment {
             datePickerDialog.show();
         });
 
-
+        // -- Show popup anchored to filter button --
         popupWindow.showAsDropDown(anchorView, 0, 16);
     }
 
-    private void toggleSection(View sectionContent, ImageView arrowIcon) {
-        if (sectionContent.getVisibility() == View.VISIBLE) {
-            sectionContent.setVisibility(View.GONE);
-            arrowIcon.setRotation(0);
-        } else {
-            sectionContent.setVisibility(View.VISIBLE);
-            arrowIcon.setRotation(180);
-        }
+    private void setupExpandableSection(View root, int headerId, int contentId, int arrowId) {
+        LinearLayout header = root.findViewById(headerId);
+        View content = root.findViewById(contentId);
+        ImageView arrow = root.findViewById(arrowId);
+
+        header.setOnClickListener(v -> {
+            if (content.getVisibility() == View.VISIBLE) {
+                content.setVisibility(View.GONE);
+                arrow.setRotation(0);
+            } else {
+                content.setVisibility(View.VISIBLE);
+                arrow.setRotation(180);
+            }
+        });
     }
 
+    private void filterMovies(String query) {
+        filteredList.clear();
+
+        if (query.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            textResultCount.setVisibility(View.GONE);
+            movieAdapter.notifyDataSetChanged();
+            return;
+        }
+
+        for (MovieItem movie : movieList) {
+            if (movie.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(movie);
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            textResultCount.setVisibility(View.GONE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            textResultCount.setVisibility(View.VISIBLE);
+            textResultCount.setText(filteredList.size() + " results");
+        }
+
+        movieAdapter.notifyDataSetChanged();
+    }
+
+    private void updateResultCount() {
+        textResultCount.setText(filteredList.size() + " results");
+    }
+
+    private List<MovieItem> getDummyMovies() {
+        List<MovieItem> list = new ArrayList<>();
+        list.add(new MovieItem(R.drawable.gambar1, "JUMBO", "4.9", "Film komedi keluarga"));
+        list.add(new MovieItem(R.drawable.gambar2, "SPIDERMAN", "4.8", "Pahlawan super dari Marvel"));
+        list.add(new MovieItem(R.drawable.gambar3, "BATMAN", "4.7", "Ksatria malam Gotham"));
+        list.add(new MovieItem(R.drawable.gambar1, "AVATAR", "4.5", "Petualangan dunia Pandora"));
+        return list;
+    }
 }
