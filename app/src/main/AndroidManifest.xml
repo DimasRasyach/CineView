@@ -23,6 +23,8 @@
             android:name=".Activities.SignIn"
             android:exported="false" />
         <activity
+            android:name=".Activities.HomeActivity"/>
+        <activity
             android:name=".Activities.MainActivity"
             android:exported="true">
             <intent-filter>

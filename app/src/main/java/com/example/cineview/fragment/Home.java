@@ -1,10 +1,11 @@
 package com.example.cineview.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,26 +13,42 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.cineview.R;
 import com.example.cineview.adapter.ImageSliderAdapter;
 import com.example.cineview.adapter.MovieCardAdapter;
 import com.example.cineview.adapter.TopRatingAdapter;
+import com.example.cineview.api.ApiClient;
+import com.example.cineview.api.ApiService;
 import com.example.cineview.design.GridSpacingItemDecoration;
 import com.example.cineview.models.MovieItem;
 import com.example.cineview.models.TopRatingModel;
+import com.example.cineview.models.UserModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class Home extends Fragment {
 
     private RecyclerView recyclerView;
+    private RecyclerView recommendedRecylerView;
+    private TextView usernameTextView;
+    // private CircleImageView profileImageView;
+
+    private static final String BASE_URL = "https://cine-view-backend.vercel.app/";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +63,8 @@ public class Home extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        usernameTextView = view.findViewById(R.id.username);
 
         ViewPager2 viewPager2 = view.findViewById(R.id.imageSlider);
 
@@ -102,5 +121,56 @@ public class Home extends Fragment {
         trendRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
         trendRecycler.setAdapter(trendAdapter);
 
+        fetchUserData();
+    }
+
+    private void fetchUserData() {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        String authToken = sharedPref.getString("auth_token", null);
+
+        Log.d("TOKEN_CHECK", "Bearer " + authToken);
+
+        if (authToken == null) {
+            Log.e("HomeFragment", "Token autentikasi tidak ditemukan. Pengguna kemungkinan belum log in." );
+            usernameTextView.setText("Tamu");
+            return;
+        }
+
+        // Use APIClient to get Retrofit instance
+        Retrofit retrofit = ApiClient.getRetrofit();
+        ApiService apiService = retrofit.create(ApiService.class);
+
+        Call<UserModel> call = apiService.getUserProfile("Bearer " + authToken);
+
+        call.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UserModel user = response.body();
+                    usernameTextView.setText(user.getUsername());
+                } else {
+                    String errorBody = "";
+                    try {
+                        if (response.errorBody() != null ) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        Log.e("HomeFragment", "Error reading errorBody", e);
+                    }
+                    Log.e("HomeFragment", "Gagal mendapatkan data pengguna: Code " + response.code() + ", Message: " + response.message() + ", Error body: " + errorBody);
+                    usernameTextView.setText("Gagal memuat");
+                    if (response.code() == 401) {
+                        usernameTextView.setText("Sesi habis, silahkan login kembali.");
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                Log.e("HomeFragment", "Panggilan API gagal: " + t.getMessage(), t);
+                usernameTextView.setText("Error jaringan");
+            }
+        });
     }
 }

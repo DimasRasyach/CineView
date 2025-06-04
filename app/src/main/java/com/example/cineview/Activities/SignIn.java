@@ -84,12 +84,16 @@ public class SignIn extends AppCompatActivity {
 
                             // Simpan token jika diperlukan
                             String token = apiResponse.getToken();
+                            String userId = apiResponse.getUserId();
                             // Contoh simpan ke SharedPreferences
-                            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-                            prefs.edit().putString("token", token).apply();
+                            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("auth_token", token);
+                            editor.putString("user_id", userId);
+                            editor.apply();
 
-                            // Pindah ke MainActivity
-                            Intent intent = new Intent(SignIn.this, MainActivity.class);
+                            // Pindah ke HomeActivity
+                            Intent intent = new Intent(SignIn.this, HomeActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
@@ -106,7 +110,7 @@ public class SignIn extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<ApiResponse> call, Throwable t) {
                     Toast.makeText(SignIn.this, "Gagal terhubung ke server!", Toast.LENGTH_SHORT).show();
-                    Log.e("API", "Network Error", t);
+                    Log.e("API", "Network Error" + t.getMessage(), t);
                 }
             });
         });
