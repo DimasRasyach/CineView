@@ -1,5 +1,7 @@
 package com.example.cineview.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,21 +14,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.cineview.R;
 import com.example.cineview.adapter.ImageSliderAdapter;
 import com.example.cineview.adapter.MovieCardAdapter;
 import com.example.cineview.adapter.TopRatingAdapter;
+import com.example.cineview.api.ApiClient;
+import com.example.cineview.api.ApiService;
 import com.example.cineview.design.GridSpacingItemDecoration;
 import com.example.cineview.models.MovieItem;
 import com.example.cineview.models.TopRatingModel;
+import com.example.cineview.models.UserModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class Home extends Fragment {
@@ -46,6 +57,9 @@ public class Home extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        TextView usernameTextView = view.findViewById(R.id.username);
+        fetchUserData(usernameTextView);
 
         ViewPager2 viewPager2 = view.findViewById(R.id.imageSlider);
 
@@ -101,5 +115,38 @@ public class Home extends Fragment {
         trendRecycler.setLayoutManager(gridLayoutManager);
         trendRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
         trendRecycler.setAdapter(trendAdapter);
+    }
+
+    private void fetchUserData(TextView usernameTextView) {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("user_pref", Context.MODE_PRIVATE);
+        String authToken = sharedPref.getString("auth_token", null);
+
+        if (authToken == null) {
+            Log.e("Auth", "Token tidak ditemukan");
+            usernameTextView.setText("Tamu");
+            return;
+        }
+
+        ApiService apiService = ApiClient.getRetrofit().create(ApiService.class);
+        Call<UserModel> call = apiService.getUserProfile("Bearer " + authToken);
+
+        call.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if (response.isSuccessful()) {
+                    UserModel user = response.body();
+                    usernameTextView.setText(user.getUsername());
+                } else {
+                    Log.e("Auth", "Gagal" + response.code());
+                    usernameTextView.setText("Gagal memuat");
+                }
+            }
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                Log.e("Auth", "Network Error: " + t);
+                usernameTextView.setText("Kesalahan jaringan");
+
+            }
+        });
     }
 }
