@@ -16,6 +16,12 @@
         android:theme="@style/Theme.CineView"
         tools:targetApi="31">
         <activity
+            android:name=".Activities.ChangePassword"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.ChangeUsername"
+            android:exported="false" />
+        <activity
             android:name=".Activities.MainActivity"
             android:exported="false" />
         <activity

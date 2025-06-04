@@ -37,6 +37,7 @@ public class ProfileOptionsFragment extends Fragment {
             requireActivity()
                     .getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.optionsContainer, new Account())
                     .addToBackStack(null)
                     .commit();
@@ -63,7 +64,7 @@ public class ProfileOptionsFragment extends Fragment {
             View btnLogoutCancel = dialogView.findViewById(R.id.btnLogoutCancel);
 
             btnLogoutConfirm.setOnClickListener(view1 -> {
-                Toast.makeText(getContext(), "Logging out...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Logging out", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
                 Intent intent = new Intent(getActivity(), SignIn.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

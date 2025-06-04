@@ -123,13 +123,11 @@ public class Search extends Fragment {
         popupWindow.setFocusable(true);
         popupWindow.setElevation(20f);
 
-        // -- Setup Expandable Sections --
         setupExpandableSection(popupView, R.id.sectionGenreHeader, R.id.chipGroupGenre, R.id.arrowGenre);
         setupExpandableSection(popupView, R.id.sectionDateHeader, R.id.layoutDatePicker, R.id.arrowDate);
         setupExpandableSection(popupView, R.id.sectionActorHeader, R.id.layoutActorSearch, R.id.arrowActor);
         setupExpandableSection(popupView, R.id.sectionOrderHeader, R.id.chipGroupOrder, R.id.arrowOrder);
 
-        // -- Setup Date Picker --
         EditText editReleaseDate = popupView.findViewById(R.id.editReleaseDate);
         editReleaseDate.setOnClickListener(v -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -143,7 +141,6 @@ public class Search extends Fragment {
             datePickerDialog.show();
         });
 
-        // -- Show popup anchored to filter button --
         popupWindow.showAsDropDown(anchorView, 0, 16);
     }
 

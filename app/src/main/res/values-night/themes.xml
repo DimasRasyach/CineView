@@ -3,5 +3,7 @@
     <style name="Base.Theme.CineView" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorSecondaryContainer">#D4AF37</item>
+        <item name="android:navigationBarColor">#1C1C1E</item>
     </style>
 </resources>
