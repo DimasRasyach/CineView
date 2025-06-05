@@ -84,8 +84,8 @@ public class SignIn extends AppCompatActivity {
                             // Simpan token jika diperlukan
                             String token = apiResponse.getToken();
                             // Contoh simpan ke SharedPreferences
-                            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-                            prefs.edit().putString("token", token).apply();
+                            SharedPreferences prefs = getSharedPreferences("user_pref", MODE_PRIVATE);
+                            prefs.edit().putString("auth_token", token).apply();
 
                             // Pindah ke MainActivity
                             Intent intent = new Intent(SignIn.this, MainActivity.class);
