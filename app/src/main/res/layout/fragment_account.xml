@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingEnd="24dp"
+    android:paddingStart="24dp"
+    android:padding="8dp"
+    android:background="#FCF9F9"
+    >
+
+    <!-- Username -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvUsername"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="center_vertical"
+            android:text="Username"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="#000000"
+            android:background="@drawable/edittext_background" />
+
+        <TextView
+            android:id="@+id/tvChangeUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Change Username"
+            android:textColor="#564DB9"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_medium" />
+    </LinearLayout>
+
+    <!-- Password -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvPassword"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="center_vertical"
+            android:text="********"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="#000000"
+            android:background="@drawable/edittext_background" />
+
+        <TextView
+            android:id="@+id/tvChangePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Change Password"
+            android:textColor="#564DB9"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_medium" />
+    </LinearLayout>
+
+
+</LinearLayout>
