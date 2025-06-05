@@ -10,14 +10,14 @@
         android:id="@+id/imageProfile"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/foto"
+        android:src="@drawable/img"
         android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="FILM 1"
+        android:text="FILM"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         android:fontFamily="@font/inter_medium"

@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <!-- Komentar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,13 +41,12 @@
                 android:layout_height="wrap_content"
                 android:text="Isi komentar..."
                 android:textColor="@android:color/white"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:fontFamily="@font/inter_medium"
                 android:lineSpacingExtra="4dp" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Divider -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
