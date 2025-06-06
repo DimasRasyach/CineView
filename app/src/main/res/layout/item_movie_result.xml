@@ -34,7 +34,7 @@
                 android:id="@+id/textTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="JUDUL"
+                android:text="Title"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:fontFamily="@font/inter_medium" />

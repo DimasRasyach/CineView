@@ -43,11 +43,6 @@ public class ProfileOptionsFragment extends Fragment {
                     .commit();
         });
 
-        menuSupport.setOnClickListener(v -> {
-//            Intent intent = new Intent(getActivity(), SupportActivity.class);
-//            startActivity(intent);
-        });
-
         menuLogout.setOnClickListener(v -> {
             View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_logout, null);
 

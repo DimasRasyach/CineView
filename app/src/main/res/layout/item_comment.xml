@@ -30,7 +30,7 @@
                 android:id="@+id/commentUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nama"
+                android:text="Username"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:fontFamily="@font/inter_medium" />
@@ -39,7 +39,7 @@
                 android:id="@+id/commentText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Isi komentar..."
+                android:text="Comment"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 android:fontFamily="@font/inter_medium"

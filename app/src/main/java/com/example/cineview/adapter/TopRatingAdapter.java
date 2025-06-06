@@ -1,5 +1,7 @@
 package com.example.cineview.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cineview.Activities.detailfilm;
 import com.example.cineview.R;
 import com.example.cineview.models.TopRatingModel;
 
@@ -18,8 +21,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.ViewHolder> {
 
     private List<TopRatingModel> dataList;
+    private Context context;
 
-    public TopRatingAdapter(List<TopRatingModel> dataList) {
+    public TopRatingAdapter(Context context, List<TopRatingModel> dataList) {
+        this.context = context;
         this.dataList = dataList;
     }
 
@@ -46,6 +51,16 @@ public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.View
         TopRatingModel item = dataList.get(position);
         holder.imageProfile.setImageResource(item.getImageResId());
         holder.title.setText(item.getTitle());
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, detailfilm.class);
+            intent.putExtra("MOVIE_TITLE", item.getTitle()); 
+            context.startActivity(intent);
+
+            if (context instanceof android.app.Activity) {
+                ((android.app.Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
     }
 
     @Override
@@ -53,4 +68,3 @@ public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.View
         return dataList.size();
     }
 }
-

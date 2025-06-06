@@ -1,5 +1,8 @@
 package com.example.cineview.adapter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,15 +11,18 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cineview.Activities.detailfilm;
 import com.example.cineview.R;
 
 import java.util.List;
 
 public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.ViewHolder> {
 
+    private Context context;
     private List<Integer> imageList;
 
-    public ImageSliderAdapter(List<Integer> imageList) {
+    public ImageSliderAdapter(Context context, List<Integer> imageList) {
+        this.context = context;
         this.imageList = imageList;
     }
 
@@ -29,7 +35,18 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.imageView.setImageResource(imageList.get(position));
+        int imageResId = imageList.get(position);
+        holder.imageView.setImageResource(imageResId);
+
+        holder.imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, detailfilm.class);
+            intent.putExtra("MOVIE_IMAGE", imageResId);
+            context.startActivity(intent);
+
+            if (context instanceof Activity) {
+                ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
     }
 
     @Override
@@ -46,4 +63,5 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
         }
     }
 }
+
 

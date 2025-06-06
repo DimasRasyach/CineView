@@ -1,6 +1,7 @@
 package com.example.cineview.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cineview.Activities.detailfilm;
 import com.example.cineview.R;
 import com.example.cineview.models.MovieItem;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -56,6 +58,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                 holder.textRating.setText("-");
             }
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, detailfilm.class);
+            intent.putExtra("MOVIE_TITLE", movie.getTitle());
+            context.startActivity(intent);
+
+            if (context instanceof android.app.Activity) {
+                ((android.app.Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
     }
 
     @Override

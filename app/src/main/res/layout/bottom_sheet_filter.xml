@@ -30,6 +30,7 @@
 
                 <TextView
                     android:text="Genre"
+                    android:textSize="16sp"
                     style="@style/FilterSectionTitle"
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
@@ -46,7 +47,7 @@
                 android:id="@+id/chipGroupGenre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:chipSpacing="8dp"
                 app:singleSelection="true"
                 android:visibility="gone" />
@@ -63,9 +64,10 @@
                 android:focusable="true">
 
                 <TextView
-                    android:text="Tanggal Rilis"
+                    android:text="Release Date"
                     style="@style/FilterSectionTitle"
                     android:layout_weight="1"
+                    android:textSize="16sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -82,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:visibility="gone">
 
                 <EditText
@@ -92,6 +94,7 @@
                     android:layout_height="40dp"
                     android:fontFamily="@font/inter_medium"
                     android:hint="dd/mm/yy"
+                    android:textSize="14sp"
                     android:background="@drawable/edittext_background"
                     android:paddingHorizontal="12dp"
                     android:focusable="false"
@@ -116,9 +119,10 @@
                 android:focusable="true">
 
                 <TextView
-                    android:text="Aktor"
+                    android:text="Actor"
                     style="@style/FilterSectionTitle"
                     android:layout_weight="1"
+                    android:textSize="16sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -135,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:visibility="gone">
 
                 <EditText
@@ -144,7 +148,8 @@
                     android:layout_weight="1"
                     android:layout_height="40dp"
                     android:fontFamily="@font/inter_medium"
-                    android:hint="Nama aktor"
+                    android:hint="Name of Actor"
+                    android:textSize="14sp"
                     android:background="@drawable/edittext_background"
                     android:paddingHorizontal="12dp" />
 
@@ -167,7 +172,8 @@
                 android:focusable="true">
 
                 <TextView
-                    android:text="Urutan"
+                    android:text="Order"
+                    android:textSize="16sp"
                     style="@style/FilterSectionTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -184,7 +190,7 @@
                 android:id="@+id/chipGroupOrder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 app:chipSpacing="8dp"
                 app:singleSelection="true"
                 android:visibility="gone" />

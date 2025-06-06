@@ -78,7 +78,7 @@
                 android:id="@+id/ratingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4.6"
+                android:text="4,6"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:fontFamily="@font/inter_medium"
@@ -314,6 +314,7 @@
                     android:layout_marginEnd="8dp">
 
                     <ImageView
+                        android:id="@+id/star1"
                         android:layout_marginStart="8dp"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
@@ -321,24 +322,28 @@
                         app:tint="@color/white"
                         android:layout_marginEnd="4dp" />
                     <ImageView
+                        android:id="@+id/star2"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/star"
                         app:tint="@color/white"
                         android:layout_marginEnd="4dp" />
                     <ImageView
+                        android:id="@+id/star3"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/star"
                         app:tint="@color/white"
                         android:layout_marginEnd="4dp" />
                     <ImageView
+                        android:id="@+id/star4"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/star"
                         app:tint="@color/white"
                         android:layout_marginEnd="4dp" />
                     <ImageView
+                        android:id="@+id/star5"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         app:tint="@color/white"
@@ -426,11 +431,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="120dp"
                         android:hint="Tulis komentar"
-                        android:textColor="@android:color/white"
+                        android:textColor="@android:color/black"
                         android:textColorHint="#888888"
                         android:background="@drawable/edittext_background"
                         android:padding="12dp"
                         android:gravity="top"
+                        android:textSize="12sp"
                         android:inputType="textMultiLine"
                         android:maxLines="4"
                         android:fontFamily="@font/inter_medium" />
