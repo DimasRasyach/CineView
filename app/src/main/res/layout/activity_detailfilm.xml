@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="#210706"
     android:fillViewport="true"
-    tools:context=".Activities.detailfilm">
+    tools:context=".Activities.DetailFilm">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

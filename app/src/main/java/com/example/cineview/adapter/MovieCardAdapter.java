@@ -1,6 +1,8 @@
 package com.example.cineview.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +11,12 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.cineview.Activities.DetailFilm;
 import com.example.cineview.R;
 import com.example.cineview.models.MovieItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.MovieViewHolder> {
@@ -33,9 +38,36 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.Movi
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         MovieItem movie = movieList.get(position);
-        holder.imagePoster.setImageResource(movie.getImageResId());
+
         holder.textTitle.setText(movie.getTitle());
-        holder.textRatingValue.setText(movie.getRating());
+        // contoh load gambar pakai Glide/Picasso
+        Glide.with(context).load(movie.getPosterUrl()).into(holder.imagePoster);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailFilm.class);
+            intent.putExtra("movie_title", movie.getTitle());
+            intent.putExtra("movie_description", movie.getDescription());
+            intent.putExtra("movie_poster", movie.getPosterUrl());
+            intent.putExtra("movie_genre", TextUtils.join(", ", movie.getGenre()));
+            intent.putExtra("movie_year", movie.getReleaseYear());
+            intent.putExtra("movie_category", movie.getCategory());
+            intent.putExtra("movie_rating", movie.getAverageRating());
+            context.startActivity(intent);
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailFilm.class);
+            intent.putExtra("title", movie.getTitle());
+            intent.putExtra("description", movie.getDescription());
+            intent.putExtra("releaseYear", movie.getReleaseYear());
+            intent.putExtra("category", movie.getCategory());
+            intent.putExtra("averageRating", movie.getAverageRating());
+            intent.putExtra("posterUrl", movie.getPosterUrl());
+
+            ArrayList<String> genreList = new ArrayList<>(movie.getGenre());
+            intent.putStringArrayListExtra("genre", genreList);
+            context.startActivity(intent);
+        });
     }
 
     @Override

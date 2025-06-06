@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cineview.R;
 import com.example.cineview.adapter.ImageSliderAdapter;
@@ -105,16 +106,34 @@ public class Home extends Fragment {
 
         RecyclerView trendRecycler = view.findViewById(R.id.recommendedRecycler);
         List<MovieItem> trendMovies = new ArrayList<>();
-        trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 1", "4.9", "Deskripsi 1"));
-        trendMovies.add(new MovieItem(R.drawable.gambar2, "Judul 2", "4.7", "Deskripsi 2"));
-        trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 3", "4.6", "Deskripsi 3"));
-        trendMovies.add(new MovieItem(R.drawable.gambar2, "Judul 4", "4.8", "Deskripsi 4"));
+//        trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 1", "4.9", "Deskripsi 1"));
+//        trendMovies.add(new MovieItem(R.drawable.gambar2, "Judul 2", "4.7", "Deskripsi 2"));
+//        trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 3", "4.6", "Deskripsi 3"));
+//        trendMovies.add(new MovieItem(R.drawable.gambar2, "Judul 4", "4.8", "Deskripsi 4"));
 
         MovieCardAdapter trendAdapter = new MovieCardAdapter(getContext(), trendMovies);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         trendRecycler.setLayoutManager(gridLayoutManager);
         trendRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
         trendRecycler.setAdapter(trendAdapter);
+
+        ApiService apiService = ApiClient.getRetrofit().create(ApiService.class);
+        Call<List<MovieItem>> call = apiService.getAllMovies();
+        call.enqueue(new Callback<List<MovieItem>>() {
+            @Override
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    trendMovies.clear();
+                    trendMovies.addAll(response.body());
+                    trendAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed to load movies", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void fetchUserData(TextView usernameTextView) {

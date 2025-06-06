@@ -41,8 +41,8 @@ public class Favorite extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        movieList = getDummyMovies(); // Replace with real favorites if available
-        filteredList = new ArrayList<>(movieList);
+        movieList = new ArrayList<>(); // Replace with real favorites if available
+        filteredList = new ArrayList<>();
 
         movieAdapter = new MovieAdapter(requireContext(), filteredList);
         recyclerView.setAdapter(movieAdapter);
@@ -146,13 +146,5 @@ public class Favorite extends Fragment {
             }
         }
         movieAdapter.notifyDataSetChanged();
-    }
-
-    private List<MovieItem> getDummyMovies() {
-        List<MovieItem> list = new ArrayList<>();
-        list.add(new MovieItem(R.drawable.gambar1, "JUMBO", "4.9", "Film komedi keluarga"));
-        list.add(new MovieItem(R.drawable.gambar2, "SPIDERMAN", "4.8", "Pahlawan super dari Marvel"));
-        list.add(new MovieItem(R.drawable.gambar3, "BATMAN", "4.7", "Ksatria malam Gotham"));
-        return list;
     }
 }
