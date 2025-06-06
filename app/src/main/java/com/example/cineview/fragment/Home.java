@@ -69,7 +69,7 @@ public class Home extends Fragment {
                 R.drawable.gambar3
         );
 
-        ImageSliderAdapter adapter = new ImageSliderAdapter(images);
+        ImageSliderAdapter adapter = new ImageSliderAdapter(requireContext(), images);
 
         viewPager2.setAdapter(adapter);
 
@@ -98,7 +98,7 @@ public class Home extends Fragment {
         list.add(new TopRatingModel(R.drawable.foto, "FILM 7"));
 
 
-        TopRatingAdapter adapter2 = new TopRatingAdapter(list);
+        TopRatingAdapter adapter2 = new TopRatingAdapter(requireContext(), list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter2);

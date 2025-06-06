@@ -20,7 +20,7 @@
         android:id="@+id/searchEditText"
         android:layout_width="0dp"
         android:layout_height="45dp"
-        android:hint="Judul"
+        android:hint="Title"
         android:fontFamily="@font/inter_medium"
         android:inputType="text"
         android:background="@drawable/edittext_background"
