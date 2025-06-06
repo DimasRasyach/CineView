@@ -2,6 +2,7 @@ package com.example.cineview.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,10 +70,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                 intent.putExtra("category", movie.getCategory());
                 intent.putExtra("averageRating", movie.getAverageRating());
                 intent.putExtra("posterUrl", movie.getPosterUrl());
+                intent.putExtra("movie_id", movie.getId());
+                Log.d("Adapter", "Movie ID sent: " + movie.getId());
 
                 ArrayList<String> genreList = new ArrayList<>(movie.getGenre());
                 intent.putStringArrayListExtra("genre", genreList);
-
                 context.startActivity(intent);
             });
         }

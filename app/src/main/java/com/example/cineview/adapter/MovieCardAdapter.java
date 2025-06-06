@@ -3,6 +3,7 @@ package com.example.cineview.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,24 +46,14 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.Movi
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailFilm.class);
-            intent.putExtra("movie_title", movie.getTitle());
-            intent.putExtra("movie_description", movie.getDescription());
-            intent.putExtra("movie_poster", movie.getPosterUrl());
-            intent.putExtra("movie_genre", TextUtils.join(", ", movie.getGenre()));
-            intent.putExtra("movie_year", movie.getReleaseYear());
-            intent.putExtra("movie_category", movie.getCategory());
-            intent.putExtra("movie_rating", movie.getAverageRating());
-            context.startActivity(intent);
-        });
-
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, DetailFilm.class);
             intent.putExtra("title", movie.getTitle());
             intent.putExtra("description", movie.getDescription());
             intent.putExtra("releaseYear", movie.getReleaseYear());
             intent.putExtra("category", movie.getCategory());
             intent.putExtra("averageRating", movie.getAverageRating());
             intent.putExtra("posterUrl", movie.getPosterUrl());
+            intent.putExtra("movie_id", movie.getId());
+            Log.d("Adapter", "Movie ID sent: " + movie.getId());
 
             ArrayList<String> genreList = new ArrayList<>(movie.getGenre());
             intent.putStringArrayListExtra("genre", genreList);

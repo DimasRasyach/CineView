@@ -3,6 +3,7 @@ package com.example.cineview.api;
 import com.example.cineview.models.ApiResponse;
 import com.example.cineview.models.LoginRequest;
 import com.example.cineview.models.MovieItem;
+import com.example.cineview.models.RatingData;
 import com.example.cineview.models.RegisterRequest;
 import com.example.cineview.models.UserModel;
 
@@ -36,4 +37,7 @@ public interface ApiService {
 
     @GET("api/movies/{id}")
     Call<MovieItem> getMovieById(@Path("id") String id);
+
+    @POST("api/movies/{id}/ratings")
+    Call<Void> postRating(@Header("Authorization") String authHeader, @Path("id") String movieId, @Body RatingData ratingData);
 }

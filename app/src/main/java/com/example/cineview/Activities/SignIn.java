@@ -81,11 +81,23 @@ public class SignIn extends AppCompatActivity {
                             // Login berhasil
                             Toast.makeText(SignIn.this, apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
 
-                            // Simpan token jika diperlukan
+                            // Simpan token
                             String token = apiResponse.getToken();
-                            // Contoh simpan ke SharedPreferences
+
+                            // deklarasi userId
+                            String userId = apiResponse.getUserId();
+                            if (userId == null) {
+                                Toast.makeText(SignIn.this, "User ID tidak ditemukan di response.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+
+                            // simpan ke SharedPreferences
                             SharedPreferences prefs = getSharedPreferences("user_pref", MODE_PRIVATE);
-                            prefs.edit().putString("auth_token", token).apply();
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("auth_token", token);
+                            editor.putString("user_id", userId);
+                            editor.apply();
 
                             // Pindah ke MainActivity
                             Intent intent = new Intent(SignIn.this, MainActivity.class);
