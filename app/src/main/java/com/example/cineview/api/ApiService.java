@@ -13,7 +13,9 @@ import com.example.cineview.models.RatingResponse;
 import com.example.cineview.models.RegisterRequest;
 import com.example.cineview.models.UserModel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -100,4 +102,23 @@ public interface ApiService {
 
     @GET("api/movies/{movieId}/ratings")
     Call<RatingResponse> getMovieRatings(@Path("movieId") String movieId);
+
+    @GET("api/users/{id}")
+    Call<UserModel> getUserById(@Header("Authorization") String token, @Path("id") String userId);
+
+    @PUT("api/users/{id}/username")
+    Call<UserModel> updateUsername(
+            @Header("Authorization") String authHeader,
+            @Path("id") String userId,
+            @Body Map<String, String> body
+    );
+    @PUT("api/users/{id}/password")
+    Call<UserModel> updatePassword(
+            @Header("Authorization") String authHeader,
+            @Path("id") String userId,
+            @Body Map<String, String> body
+    );
+
 }
+
+

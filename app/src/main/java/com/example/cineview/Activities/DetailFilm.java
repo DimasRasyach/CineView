@@ -92,6 +92,7 @@ public class DetailFilm extends AppCompatActivity {
         TextView categoryText = findViewById(R.id.categoryText);
         TextView ratingText = findViewById(R.id.ratingText);
         ImageView posterImage = findViewById(R.id.imageposter);
+        String imageUrl = getIntent().getStringExtra("image_url");
         RecyclerView genreRecyclerView = findViewById(R.id.genreRecyclerView);
         currentRatingText = findViewById(R.id.currentRatingText);
 

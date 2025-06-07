@@ -100,6 +100,11 @@ public class MovieItem {
         return ratings;
     }
 
+    public MovieItem(String id, String title, String posterUrl) {
+        this.id = id;
+        this.title = title;
+        this.posterUrl = posterUrl;
+    }
 }
 
 

@@ -12,12 +12,15 @@ public class UserModel {
     private String username;
     private String email;
     private List<String> favoriteMovies;
+    @SerializedName("password")
+    private String password;
 
     public UserModel(String id, String username, String email, List<String> favoriteMovies) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.favoriteMovies = favoriteMovies;
+        this.password = password;
     }
 
     public String getId() {
@@ -51,5 +54,13 @@ public class UserModel {
 
     public void setFavoriteMovies(List<String> favoriteMovies) {
         this.favoriteMovies = favoriteMovies;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
