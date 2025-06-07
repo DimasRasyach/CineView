@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,11 +28,18 @@ import com.example.cineview.adapter.CommentAdapter;
 import com.example.cineview.adapter.GenreAdapter;
 import com.example.cineview.api.ApiClient;
 import com.example.cineview.api.ApiService;
+import com.example.cineview.models.ApiResponse;
 import com.example.cineview.models.Comment;
 import com.example.cineview.models.CommentRequest;
 import com.example.cineview.models.CommentResponse;
+import com.example.cineview.models.FavoriteMoviesResponse;
+import com.example.cineview.models.MovieIdRequest;
+import com.example.cineview.models.MovieItem;
 import com.example.cineview.models.RatingData;
+import com.example.cineview.models.RatingRequest;
+import com.example.cineview.models.RatingResponse;
 import com.example.cineview.models.UserModel;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +60,31 @@ public class DetailFilm extends AppCompatActivity {
 
     private CommentAdapter commentAdapter;
     private List<Comment> commentList;
+    private boolean isFavorited = false;
+    private String authToken;
+    private String userId;
+    private ApiService apiService;
+    private SharedPreferences prefs;
+    private String token;
+    private String username;
+    private MaterialButton favoriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detailfilm);
+
+        prefs = getSharedPreferences("user_pref", MODE_PRIVATE);
+        token = prefs.getString("auth_token", null);
+        userId = prefs.getString("user_id", null);
+        if (token != null) {
+            authToken = "Bearer " + token;
+        } else {
+            authToken = null;
+        }
+        favoriteButton = findViewById(R.id.favoriteButton);
+        apiService = ApiClient.getRetrofit().create(ApiService.class);
 
         TextView titleText = findViewById(R.id.titleText);
         TextView descText = findViewById(R.id.descriptionText);
@@ -67,7 +95,11 @@ public class DetailFilm extends AppCompatActivity {
         RecyclerView genreRecyclerView = findViewById(R.id.genreRecyclerView);
         currentRatingText = findViewById(R.id.currentRatingText);
 
-
+        ImageButton buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(v -> {
+            finish();
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
 
         // Intent data
         Intent intent = getIntent();
@@ -97,13 +129,28 @@ public class DetailFilm extends AppCompatActivity {
         genreRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         setupStars();
+        checkIfFavorite();
+
+        if (userId != null && movieId != null) {
+            checkIfUserAlreadyRated(movieId, userId);
+        }
+
+        MaterialButton favoriteButton = findViewById(R.id.favoriteButton);
 
 
+        favoriteButton.setOnClickListener(v -> {
+            isFavorited = !isFavorited;
+
+            if (isFavorited) {
+                addFavorite();
+            } else {
+                removeFavorite();
+            }
+        });
 
         commentEditText = findViewById(R.id.commentEditText);
         sendCommentButton = findViewById(R.id.sendCommentButton);
         commentRecyclerView = findViewById(R.id.commentRecyclerView);
-
 
         // Adapter kosong
         commentList = new ArrayList<>();
@@ -155,10 +202,10 @@ public class DetailFilm extends AppCompatActivity {
                 return;
             }
 
-            SharedPreferences prefs = getSharedPreferences("user_pref", MODE_PRIVATE);
-            String token = prefs.getString("auth_token", null);
-            String userId = prefs.getString("user_id", null);
-            String username = prefs.getString("username", "Pengguna");  // Baca ulang di sini
+            prefs = getSharedPreferences("user_pref", MODE_PRIVATE);
+            token = prefs.getString("auth_token", null);
+            userId = prefs.getString("user_id", null);
+            username = prefs.getString("username", "Pengguna");  // Baca ulang di sini
 
             if (token == null || userId == null) {
                 Toast.makeText(this, "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
@@ -198,10 +245,10 @@ public class DetailFilm extends AppCompatActivity {
                 return;
             }
 
-            SharedPreferences prefs = getSharedPreferences("user_pref", MODE_PRIVATE);
-            String token = prefs.getString("auth_token", null);
-            String userId = prefs.getString("user_id", null);
-            String username = prefs.getString("username", "Pengguna");  // Baca ulang di sini
+            prefs = getSharedPreferences("user_pref", MODE_PRIVATE);
+            token = prefs.getString("auth_token", null);
+            userId = prefs.getString("user_id", null);
+            username = prefs.getString("username", "Pengguna");  // Baca ulang di sini
 
             if (token == null || userId == null) {
                 Toast.makeText(this, "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
@@ -210,8 +257,8 @@ public class DetailFilm extends AppCompatActivity {
 
             String authHeader = "Bearer " + token;
 
-            RatingData ratingData = new RatingData(userId, selectedRating);
-            Call<Void> call = apiService.postRating(authHeader, movieId, ratingData);
+            RatingRequest ratingRequest = new RatingRequest(userId, selectedRating);
+            Call<Void> call = apiService.postRating(authHeader, movieId, ratingRequest);
             call.enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
@@ -269,6 +316,117 @@ public class DetailFilm extends AppCompatActivity {
                         ContextCompat.getColor(this, android.R.color.white)
                 ));
             }
+        }
+    }
+
+    private void checkIfUserAlreadyRated(String movieId, String userId) {
+        apiService.getMovieRatings(movieId).enqueue(new Callback<RatingResponse>() {
+            @Override
+            public void onResponse(Call<RatingResponse> call, Response<RatingResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<RatingResponse.RatingItem> ratings = response.body().getRatings();
+                    boolean hasRated = false;
+                    int userRating = 0;
+
+                    for (RatingResponse.RatingItem item : ratings) {
+                        if (item.getUser().getId().equals(userId)) {
+                            hasRated = true;
+                            userRating = item.getRating();
+                            break;
+                        }
+                    }
+
+                    if (hasRated) {
+                        selectedRating = userRating;
+                        updateStarUI(userRating);  // Update tampilan bintang sesuai rating user
+                        currentRatingText.setText(String.valueOf(userRating));
+                        Toast.makeText(DetailFilm.this, "Rating yang sudah kamu beri: " + userRating, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(DetailFilm.this, "Kamu belum memberi rating", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RatingResponse> call, Throwable t) {
+                Log.e("DetailFilm", "Gagal ambil data rating", t);
+            }
+        });
+    }
+
+
+    private void checkIfFavorite() {
+        apiService.getFavorites(authToken, userId).enqueue(new Callback<FavoriteMoviesResponse>() {
+            @Override
+            public void onResponse(Call<FavoriteMoviesResponse> call, Response<FavoriteMoviesResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<MovieItem> favoriteMovies = response.body().getData();
+                    isFavorited = false;
+                    for (MovieItem movie : favoriteMovies) {
+                        if (movie.getId().equals(movieId)) {
+                            isFavorited = true;
+                            break;
+                        }
+                    }
+                    updateFavoriteIcon();
+                } else {
+                    Toast.makeText(DetailFilm.this, "Gagal memuat data favorit", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FavoriteMoviesResponse> call, Throwable t) {
+                Toast.makeText(DetailFilm.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void addFavorite() {
+        MovieIdRequest request = new MovieIdRequest(movieId);
+        apiService.addFavoriteMovie(authToken, userId, request).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    isFavorited = true;
+                    updateFavoriteIcon();
+                    Toast.makeText(DetailFilm.this, "Ditambahkan ke favorit!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(DetailFilm.this, "Gagal menambahkan favorit", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(DetailFilm.this, "Kesalahan jaringan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void removeFavorite() {
+        apiService.deleteFavoriteMovie(authToken, userId, movieId).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    isFavorited = false;
+                    updateFavoriteIcon();
+                    Toast.makeText(DetailFilm.this, "Dihapus dari favorit!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(DetailFilm.this, "Gagal menghapus favorit", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(DetailFilm.this, "Kesalahan jaringan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateFavoriteIcon() {
+        if (isFavorited) {
+            favoriteButton.setIconResource(R.drawable.heartfill);
+            favoriteButton.setIconTint(null);
+        } else {
+            favoriteButton.setIconResource(R.drawable.heart);
+            favoriteButton.setIconTint(ColorStateList.valueOf(Color.WHITE));
         }
     }
 }

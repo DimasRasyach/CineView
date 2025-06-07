@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -25,6 +27,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private Context context;
     private List<MovieItem> movieList;
+    private OnFavoriteClickListener favoriteClickListener;
+
+    public interface OnFavoriteClickListener {
+        void onAddFavoriteClicked(String movieId);
+    }
+
+    public void setOnFavoriteClickListener(OnFavoriteClickListener listener) {
+        this.favoriteClickListener = listener;
+    }
 
     public MovieAdapter(Context context, List<MovieItem> movieList) {
         this.context = context;

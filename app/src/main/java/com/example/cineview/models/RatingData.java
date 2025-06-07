@@ -1,27 +1,22 @@
 package com.example.cineview.models;
 
 public class RatingData {
-    private String userId;
+    private UserModel user;
     private int rating;
 
-    public RatingData(String userId, int rating) {
-        this.userId = userId;
-        this.rating = rating;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public UserModel getUser() {
+        return user;
     }
 
     public int getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public static class User {
+        private String _id;
+
+        public String getId() {
+            return _id;
+        }
     }
 }
