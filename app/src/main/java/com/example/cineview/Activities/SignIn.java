@@ -84,6 +84,9 @@ public class SignIn extends AppCompatActivity {
                             // Simpan token
                             String token = apiResponse.getToken();
 
+                            // Simpan username
+                            String username = apiResponse.getUsername();
+
                             // deklarasi userId
                             String userId = apiResponse.getUserId();
                             if (userId == null) {
@@ -97,6 +100,7 @@ public class SignIn extends AppCompatActivity {
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putString("auth_token", token);
                             editor.putString("user_id", userId);
+                            editor.putString("username", username);
                             editor.apply();
 
                             // Pindah ke MainActivity

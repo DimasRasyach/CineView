@@ -1,11 +1,33 @@
 package com.example.cineview.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class UserModel {
+    @SerializedName("_id")
+    private String id;
+    @SerializedName("username")
+
     private String username;
     private String email;
     private List<String> favoriteMovies;
+
+    public UserModel(String id, String username, String email, List<String> favoriteMovies) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.favoriteMovies = favoriteMovies;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public UserModel(String id, String username) {
+        this.id = id;
+        this.username = username;
+    }
 
     public String getUsername() {
         return username;

@@ -1,5 +1,7 @@
 package com.example.cineview.models;
 
+import android.media.Rating;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -7,13 +9,26 @@ import java.util.List;
 public class MovieItem {
     @SerializedName("_id")
     private String id;
+    @SerializedName("title")
     private String title;
+    @SerializedName("description")
     private String description;
+    @SerializedName("posterUrl")
     private String posterUrl;
+    @SerializedName("genre")
     private List<String> genre;
+    @SerializedName("releaseYear")
     private int releaseYear;
+    @SerializedName("category")
     private String category;
+    @SerializedName("averageRating")
     private double averageRating;
+
+    @SerializedName("ratings")
+    private List<RatingData> ratings;
+
+    @SerializedName("comments")
+    private List<Comment> comments;
 
     public String getId() {
         return id;
@@ -78,6 +93,13 @@ public class MovieItem {
     public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
     }
+    public List<Comment> getComments() {
+        return comments;
+    }
+    public List<RatingData> getRatings() {
+        return ratings;
+    }
+
 }
 
 
