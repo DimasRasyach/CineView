@@ -46,6 +46,8 @@ public class Home extends Fragment {
     private RecyclerView recyclerView;
     public ApiService apiService;
     public Call<UserModel> call;
+    private TopRatingAdapter topRatingAdapter;
+    private List<TopRatingModel> topRatingList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,28 +111,40 @@ public class Home extends Fragment {
                 Toast.makeText(getContext(), "Failed to load slider movies", Toast.LENGTH_SHORT).show();
             }
         });
-//        (
-//                R.drawable.gambar1,
-//                R.drawable.gambar2,
-//                R.drawable.gambar3
-//        );
 
         recyclerView = view.findViewById(R.id.topRatingRecycler);
-
-        List<TopRatingModel> list = new ArrayList<>();
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 1"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 2"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 3"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 4"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 5"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 6"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 7"));
-
-
-        TopRatingAdapter adapter2 = new TopRatingAdapter(getContext(), list);
+        List<MovieItem> list = new ArrayList<>();
+        TopRatingAdapter adapter2 = new TopRatingAdapter(list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter2);
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 1"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 2"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 3"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 4"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 5"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 6"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 7"));
+
+        apiService.getTopRatedMovies().enqueue(new Callback<List<MovieItem>>() {
+            @Override
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    list.clear();
+                    list.addAll(response.body());
+                    adapter2.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed to load top rated movies", Toast.LENGTH_SHORT).show();
+                Log.e("TopRatedError", "onFailure: Gagal memuat daftar top-rated film.", t);
+            }
+        });
+
+
+        // -- RECOMMENDED RECYCLER -- //
 
         RecyclerView trendRecycler = view.findViewById(R.id.recommendedRecycler);
         List<MovieItem> trendMovies = new ArrayList<>();
