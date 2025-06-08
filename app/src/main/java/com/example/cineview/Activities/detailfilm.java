@@ -7,12 +7,14 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -111,6 +114,7 @@ public class DetailFilm extends AppCompatActivity {
             return insets;
         });
 
+
         // Intent data
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
@@ -145,8 +149,22 @@ public class DetailFilm extends AppCompatActivity {
             checkIfUserAlreadyRated(movieId, userId);
         }
 
-        MaterialButton favoriteButton = findViewById(R.id.favoriteButton);
+        NestedScrollView scrollView = findViewById(R.id.detailfilm);
+        View ratingSection = findViewById(R.id.ratingSection);
+        View commentSection = findViewById(R.id.commentInputSection);
 
+        MaterialButton ratingButton = findViewById(R.id.ratingButton);
+        MaterialButton commentButton = findViewById(R.id.commentButton);
+
+        ratingButton.setOnClickListener(v -> {
+            scrollView.post(() -> scrollView.smoothScrollTo(0, ratingSection.getTop()));
+        });
+
+        commentButton.setOnClickListener(v -> {
+            scrollView.post(() -> scrollView.smoothScrollTo(0, commentSection.getTop()));
+        });
+
+        MaterialButton favoriteButton = findViewById(R.id.favoriteButton);
 
         favoriteButton.setOnClickListener(v -> {
             isFavorited = !isFavorited;
@@ -190,7 +208,6 @@ public class DetailFilm extends AppCompatActivity {
                 Log.e("DetailFilm", "onFailure", t);
             }
         });
-
 
 
         commentEditText.setOnEditorActionListener((v, actionId, event) -> {
@@ -350,9 +367,6 @@ public class DetailFilm extends AppCompatActivity {
                         selectedRating = userRating;
                         updateStarUI(userRating);  // Update tampilan bintang sesuai rating user
                         currentRatingText.setText(String.valueOf(userRating));
-                        Toast.makeText(DetailFilm.this, "Rating yang sudah kamu beri: " + userRating, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(DetailFilm.this, "Kamu belum memberi rating", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

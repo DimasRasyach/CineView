@@ -45,6 +45,8 @@ public class Favorite extends Fragment implements MovieAdapter.OnFavoriteClickLi
     private String authToken;
     private String userId;
 
+    private ProgressBar loadingProgressBar;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
@@ -55,6 +57,8 @@ public class Favorite extends Fragment implements MovieAdapter.OnFavoriteClickLi
         recyclerView = view.findViewById(R.id.favoResultRecyclerView);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        loadingProgressBar = view.findViewById(R.id.loadingProgressBar);
 
         movieList = new ArrayList<>();
         filteredList = new ArrayList<>();
@@ -147,6 +151,7 @@ public class Favorite extends Fragment implements MovieAdapter.OnFavoriteClickLi
         popupWindow.showAsDropDown(anchorView, 0, 16);
     }
 
+
     private void setupExpandableSection(View root, int headerId, int contentId, int arrowId) {
         LinearLayout header = root.findViewById(headerId);
         View content = root.findViewById(contentId);
@@ -174,26 +179,45 @@ public class Favorite extends Fragment implements MovieAdapter.OnFavoriteClickLi
     }
 
     private void loadFavoriteMovies() {
+        showLoading(true); // show progress
+
         apiService.getFavorites(authToken, userId).enqueue(new Callback<FavoriteMoviesResponse>() {
             @Override
             public void onResponse(Call<FavoriteMoviesResponse> call, Response<FavoriteMoviesResponse> response) {
+                showLoading(false); // hide progress
+
                 if (response.isSuccessful() && response.body() != null) {
                     movieList.clear();
-                    movieList.addAll(response.body().getData()); // Ambil dari field "data"
+                    movieList.addAll(response.body().getData());
                     filterMovies(searchEditText.getText().toString());
                 } else {
                     Toast.makeText(requireContext(), "Gagal memuat favorit", Toast.LENGTH_SHORT).show();
-                    Log.e("TAG_ERROR", "Gagal Memuat Favorit: kode = " + response.code() + ", pesan = " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<FavoriteMoviesResponse> call, Throwable t) {
+                showLoading(false); // hide progress
                 Toast.makeText(requireContext(), "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.e("TAG_ERROR", "Terjadi kesalahan", t);
             }
         });
+
     }
+
+    private void showLoading(boolean isLoading) {
+        if (isLoading) {
+            loadingProgressBar.setAlpha(0f);
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            loadingProgressBar.animate().alpha(1f).setDuration(200).start();
+            recyclerView.setVisibility(View.INVISIBLE);
+        } else {
+            loadingProgressBar.animate().alpha(0f).setDuration(200).withEndAction(() -> {
+                loadingProgressBar.setVisibility(View.GONE);
+            }).start();
+            recyclerView.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     @Override
     public void onResume() {
@@ -202,7 +226,6 @@ public class Favorite extends Fragment implements MovieAdapter.OnFavoriteClickLi
             loadFavoriteMovies();
         }
     }
-
 
     // Implementasi interface dari adapter
     @Override

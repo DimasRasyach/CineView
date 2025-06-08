@@ -1,5 +1,6 @@
 package com.example.cineview.adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +26,10 @@ public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.View
 
     private List<MovieItem> movieList;
 
-    public TopRatingAdapter(List<MovieItem> movieList) {
+    private Context context;
+
+    public TopRatingAdapter(Context context, List<MovieItem> movieList) {
+        this.context = context;
         this.movieList = movieList;
     }
 
@@ -71,6 +75,11 @@ public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.View
             ArrayList<String> genreList = new ArrayList<>(movie.getGenre());
             intent.putStringArrayListExtra("genre", genreList);
             holder.itemView.getContext().startActivity(intent);
+            context.startActivity(intent);
+
+            if (context instanceof android.app.Activity) {
+                ((android.app.Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
         });
     }
 

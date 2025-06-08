@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,29 +30,42 @@ import com.example.cineview.api.ApiClient;
 import com.example.cineview.api.ApiService;
 import com.example.cineview.design.GridSpacingItemDecoration;
 import com.example.cineview.models.MovieItem;
-import com.example.cineview.models.TopRatingModel;
 import com.example.cineview.models.UserModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class Home extends Fragment {
 
     private RecyclerView recyclerView;
-    public ApiService apiService;
-    public Call<UserModel> call;
-    private TopRatingAdapter topRatingAdapter;
-    private List<TopRatingModel> topRatingList = new ArrayList<>();
+    private ProgressBar progressBar;
+    private ConstraintLayout homeLayout;
+    private ApiService apiService;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private int loadingCount = 0; // Counter untuk track loading API
+
+    private void showLoading() {
+        loadingCount++;
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading() {
+        loadingCount--;
+        if (loadingCount <= 0) {
+            loadingCount = 0;
+            progressBar.setVisibility(View.GONE);
+
+            // Tampilkan layout utama setelah semua loading selesai
+            if (homeLayout.getVisibility() != View.VISIBLE) {
+                homeLayout.setAlpha(0f);
+                homeLayout.setVisibility(View.VISIBLE);
+                homeLayout.animate().alpha(1f).setDuration(300).start(); // animasi fade-in
+            }
+        }
     }
 
     @Override
@@ -63,26 +77,31 @@ public class Home extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        progressBar = view.findViewById(R.id.progressBar);
+        homeLayout = view.findViewById(R.id.home);
+        progressBar.setVisibility(View.VISIBLE);
+        homeLayout.setVisibility(View.GONE); // sembunyikan tampilan utama saat awal
+
         TextView usernameTextView = view.findViewById(R.id.username);
         fetchUserData(usernameTextView);
 
+        // Setup Image Slider
         ViewPager2 viewPager2 = view.findViewById(R.id.imageSlider);
         List<MovieItem> imageSliderMovies = new ArrayList<>();
         ImageSliderAdapter sliderAdapter = new ImageSliderAdapter(getContext(), imageSliderMovies);
         viewPager2.setAdapter(sliderAdapter);
 
-        // Panggil API
         apiService = ApiClient.getRetrofit().create(ApiService.class);
-        Call<List<MovieItem>> call = apiService.getAllMovies();
-        call.enqueue(new Callback<List<MovieItem>>() {
+
+        // Load slider movies
+        showLoading();
+        Call<List<MovieItem>> sliderCall = apiService.getAllMovies();
+        sliderCall.enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<MovieItem> moviesFromApi = response.body();
-
-                    // Ambil maksimal 3 film
                     List<MovieItem> top3 = moviesFromApi.subList(0, Math.min(3, moviesFromApi.size()));
-
                     imageSliderMovies.clear();
                     imageSliderMovies.addAll(top3);
                     sliderAdapter.notifyDataSetChanged();
@@ -103,78 +122,80 @@ public class Home extends Fragment {
                         };
                         handler.postDelayed(runnable, 5000);
                     }
+                } else {
+                    Toast.makeText(getContext(), "Failed to load slider movies", Toast.LENGTH_SHORT).show();
                 }
+                hideLoading();
             }
 
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
                 Toast.makeText(getContext(), "Failed to load slider movies", Toast.LENGTH_SHORT).show();
+                hideLoading();
             }
         });
 
+        // Setup top rated recycler
         recyclerView = view.findViewById(R.id.topRatingRecycler);
-        List<MovieItem> list = new ArrayList<>();
-        TopRatingAdapter adapter2 = new TopRatingAdapter(list);
+        List<MovieItem> topRatedList = new ArrayList<>();
+        TopRatingAdapter topRatingAdapter = new TopRatingAdapter(requireContext(), topRatedList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter2);
-//        list.add(new TopRatingModel(R.drawable.foto, "FILM 1"));
-//        list.add(new TopRatingModel(R.drawable.foto, "FILM 2"));
-//        list.add(new TopRatingModel(R.drawable.foto, "FILM 3"));
-//        list.add(new TopRatingModel(R.drawable.foto, "FILM 4"));
-//        list.add(new TopRatingModel(R.drawable.foto, "FILM 5"));
-//        list.add(new TopRatingModel(R.drawable.foto, "FILM 6"));
-//        list.add(new TopRatingModel(R.drawable.foto, "FILM 7"));
+        recyclerView.setAdapter(topRatingAdapter);
 
+        // Load top rated movies
+        showLoading();
         apiService.getTopRatedMovies().enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    list.clear();
-                    list.addAll(response.body());
-                    adapter2.notifyDataSetChanged();
+                    topRatedList.clear();
+                    topRatedList.addAll(response.body());
+                    topRatingAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), "Failed to load top rated movies", Toast.LENGTH_SHORT).show();
                 }
+                hideLoading();
             }
 
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
                 Toast.makeText(getContext(), "Failed to load top rated movies", Toast.LENGTH_SHORT).show();
                 Log.e("TopRatedError", "onFailure: Gagal memuat daftar top-rated film.", t);
+                hideLoading();
             }
         });
 
-
-        // -- RECOMMENDED RECYCLER -- //
-
-        RecyclerView trendRecycler = view.findViewById(R.id.recommendedRecycler);
-        List<MovieItem> trendMovies = new ArrayList<>();
-//        trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 1", "4.9", "Deskripsi 1"));
-//        trendMovies.add(new MovieItem(R.drawable.gambar2, "Judul 2", "4.7", "Deskripsi 2"));
-//        trendMovies.add(new MovieItem(R.drawable.gambar1, "Judul 3", "4.6", "Deskripsi 3"));
-//        trendMovies.add(new MovieItem(R.drawable.gambar2, "Judul 4", "4.8", "Deskripsi 4"));
-
-        MovieCardAdapter trendAdapter = new MovieCardAdapter(getContext(), trendMovies);
+        // Setup recommended recycler
+        RecyclerView recommendedRecycler = view.findViewById(R.id.recommendedRecycler);
+        List<MovieItem> recommendedList = new ArrayList<>();
+        MovieCardAdapter recommendedAdapter = new MovieCardAdapter(getContext(), recommendedList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
-        trendRecycler.setLayoutManager(gridLayoutManager);
-        trendRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
-        trendRecycler.setAdapter(trendAdapter);
+        recommendedRecycler.setLayoutManager(gridLayoutManager);
+        recommendedRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
+        recommendedRecycler.setAdapter(recommendedAdapter);
 
-        apiService = ApiClient.getRetrofit().create(ApiService.class);
-        call = apiService.getAllMovies();
-        call.enqueue(new Callback<List<MovieItem>>() {
+        // Load recommended movies
+        showLoading();
+        Call<List<MovieItem>> recommendedCall = apiService.getAllMovies();
+        recommendedCall.enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    trendMovies.clear();
-                    trendMovies.addAll(response.body());
-                    trendAdapter.notifyDataSetChanged();
+                    recommendedList.clear();
+                    recommendedList.addAll(response.body());
+                    recommendedAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), "Failed to load movies", Toast.LENGTH_SHORT).show();
                 }
+                hideLoading();
             }
 
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
                 Toast.makeText(getContext(), "Failed to load movies", Toast.LENGTH_SHORT).show();
                 Log.e("MovieApiError", "onFailure: Gagal memuat daftar film.", t);
+                hideLoading();
             }
         });
     }
@@ -203,11 +224,11 @@ public class Home extends Fragment {
                     usernameTextView.setText("Gagal memuat");
                 }
             }
+
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
                 Log.e("Auth", "Network Error: " + t);
                 usernameTextView.setText("Kesalahan jaringan");
-
             }
         });
     }

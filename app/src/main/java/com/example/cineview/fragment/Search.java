@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,8 @@ import retrofit2.Response;
 
 public class Search extends Fragment {
 
+    private ProgressBar searchLoading;
+
     private RecyclerView recyclerView;
     private EditText searchEditText;
     private TextView textResultCount;
@@ -54,6 +57,8 @@ public class Search extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
+
+        searchLoading = view.findViewById(R.id.searchLoading);
 
         Button btnFilter = view.findViewById(R.id.btnFilter);
         Button btnSort = view.findViewById(R.id.btnSort);
@@ -73,8 +78,6 @@ public class Search extends Fragment {
         movieAdapter = new MovieAdapter(requireContext(), filteredList);
         recyclerView.setAdapter(movieAdapter);
 
-        // ambil data API
-        fetchAllMovies();
 
         updateResultCount();
 
@@ -204,10 +207,15 @@ public class Search extends Fragment {
     }
 
     private void fetchAllMovies() {
+        searchLoading.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        textResultCount.setVisibility(View.GONE);
+
         ApiService apiService = ApiClient.getRetrofit().create(ApiService.class);
         apiService.getAllMovies().enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                searchLoading.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     movieList.clear();
                     movieList.addAll(response.body());
@@ -227,8 +235,15 @@ public class Search extends Fragment {
 
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                searchLoading.setVisibility(View.GONE);
                 Toast.makeText(requireContext(), "Gagal memuat film: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchAllMovies();
     }
 }

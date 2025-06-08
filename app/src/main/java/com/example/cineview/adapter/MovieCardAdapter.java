@@ -59,6 +59,10 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.Movi
             ArrayList<String> genreList = new ArrayList<>(movie.getGenre());
             intent.putStringArrayListExtra("genre", genreList);
             context.startActivity(intent);
+
+            if (context instanceof android.app.Activity) {
+                ((android.app.Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
         });
     }
 
