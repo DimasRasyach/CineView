@@ -8,6 +8,8 @@
     android:layout_height="match_parent"
     android:background="#210706"
     android:fillViewport="true"
+    android:focusableInTouchMode="true"
+    android:descendantFocusability="afterDescendants"
     tools:context=".Activities.DetailFilm">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -440,6 +442,8 @@
                         android:inputType="textMultiLine"
                         android:maxLines="4"
                         android:imeOptions="actionDone"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:fontFamily="@font/inter_medium" />
 
                     <Button

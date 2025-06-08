@@ -41,6 +41,7 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.Movi
         MovieItem movie = movieList.get(position);
 
         holder.textTitle.setText(movie.getTitle());
+        holder.textRatingValue.setText(String.valueOf(movie.getAverageRating()));
         // contoh load gambar pakai Glide/Picasso
         Glide.with(context).load(movie.getPosterUrl()).into(holder.imagePoster);
 
@@ -58,6 +59,10 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.Movi
             ArrayList<String> genreList = new ArrayList<>(movie.getGenre());
             intent.putStringArrayListExtra("genre", genreList);
             context.startActivity(intent);
+
+            if (context instanceof android.app.Activity) {
+                ((android.app.Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
         });
     }
 

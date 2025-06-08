@@ -119,6 +119,9 @@ public interface ApiService {
             @Body Map<String, String> body
     );
 
+    @GET("api/movies/top-rated")
+    Call<List<MovieItem>> getTopRatedMovies();
+
 }
 
 

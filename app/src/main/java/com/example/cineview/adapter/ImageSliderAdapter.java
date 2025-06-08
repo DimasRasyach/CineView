@@ -27,6 +27,7 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
     private List<MovieItem> movieList;
 
     public ImageSliderAdapter(Context context, List<MovieItem> movieList) {
+        this.context = context;
         this.movieList = movieList;
     }
 
@@ -59,6 +60,10 @@ public class ImageSliderAdapter extends RecyclerView.Adapter<ImageSliderAdapter.
             ArrayList<String> genreList = new ArrayList<>(movie.getGenre());
             intent.putStringArrayListExtra("genre", genreList);
             v.getContext().startActivity(intent);
+
+            if (context instanceof android.app.Activity) {
+                ((android.app.Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
         });
     }
 
