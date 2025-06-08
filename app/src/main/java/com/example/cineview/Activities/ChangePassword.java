@@ -1,8 +1,10 @@
 package com.example.cineview.Activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,8 +17,21 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cineview.R;
+import com.example.cineview.api.ApiClient;
+import com.example.cineview.api.ApiService;
+import com.example.cineview.models.UserModel;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChangePassword extends AppCompatActivity {
+    private ApiService apiService;
+    private String authHeader;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +43,14 @@ public class ChangePassword extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
+
+        // Ambil token dan userId dari SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("user_pref", MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
+        userId = prefs.getString("user_id", null);
+
+        // Inisialisasi Retrofit client dengan interceptor auth token
+        apiService = ApiClient.getRetrofit().create(ApiService.class);
 
         EditText passwordEditText = findViewById(R.id.passwordEditText);
         ImageView togglePasswordVisibility = findViewById(R.id.togglePasswordVisibility);
@@ -81,11 +104,32 @@ public class ChangePassword extends AppCompatActivity {
                 return;
             }
 
-            // Kalau valid, lakukan aksi update di sini
-            Toast.makeText(ChangePassword.this, "Password berhasil diperbarui", Toast.LENGTH_SHORT).show();
+            authHeader = "Bearer " + token;
 
-            // Contoh: kembali ke halaman sebelumnya atau lanjut ke aksi lainnya
-            finish(); // Menutup halaman ini
+            // Body request
+            Map<String, String> body = new HashMap<>();
+            body.put("password", password);
+
+            // Panggil API
+            Call<UserModel> call = apiService.updatePassword(authHeader, userId, body);
+            call.enqueue(new Callback<UserModel>() {
+                @Override
+                public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(ChangePassword.this, "Password berhasil diperbarui", Toast.LENGTH_SHORT).show();
+                        finish();
+                } else {
+                        Toast.makeText(ChangePassword.this, "Gagal update password: " + response.message(), Toast.LENGTH_SHORT).show();
+                        Log.e("ChangePassword", "Update failed: " + response.code() + " - " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserModel> call, Throwable t) {
+                    Toast.makeText(ChangePassword.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("ChangePassword", "onFailure: " + t.getMessage(), t);
+                }
+            });
         });
     }
 }

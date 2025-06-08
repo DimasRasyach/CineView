@@ -16,7 +16,8 @@
         android:theme="@style/Theme.CineView"
         tools:targetApi="31">
         <activity
-            android:name=".Activities.detailfilm"
+            android:name=".Activities.DetailFilm"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".Activities.ChangePassword"

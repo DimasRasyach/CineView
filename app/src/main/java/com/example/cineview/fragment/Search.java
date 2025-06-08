@@ -19,14 +19,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cineview.R;
 import com.example.cineview.adapter.MovieAdapter;
+import com.example.cineview.api.ApiClient;
+import com.example.cineview.api.ApiService;
 import com.example.cineview.models.MovieItem;
+import com.example.cineview.models.UserModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Search extends Fragment {
 
@@ -59,11 +67,14 @@ public class Search extends Fragment {
 
         // Inisialisasi RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        movieList = getDummyMovies();
-        filteredList = new ArrayList<>(movieList);
+        movieList = new ArrayList<>();
+        filteredList = new ArrayList<>();
 
         movieAdapter = new MovieAdapter(requireContext(), filteredList);
         recyclerView.setAdapter(movieAdapter);
+
+        // ambil data API
+        fetchAllMovies();
 
         updateResultCount();
 
@@ -192,12 +203,32 @@ public class Search extends Fragment {
         textResultCount.setText(filteredList.size() + " results");
     }
 
-    private List<MovieItem> getDummyMovies() {
-        List<MovieItem> list = new ArrayList<>();
-        list.add(new MovieItem(R.drawable.gambar1, "JUMBO", "4.9", "Film komedi keluarga"));
-        list.add(new MovieItem(R.drawable.gambar2, "SPIDERMAN", "4.8", "Pahlawan super dari Marvel"));
-        list.add(new MovieItem(R.drawable.gambar3, "BATMAN", "4.7", "Ksatria malam Gotham"));
-        list.add(new MovieItem(R.drawable.gambar1, "AVATAR", "4.5", "Petualangan dunia Pandora"));
-        return list;
+    private void fetchAllMovies() {
+        ApiService apiService = ApiClient.getRetrofit().create(ApiService.class);
+        apiService.getAllMovies().enqueue(new Callback<List<MovieItem>>() {
+            @Override
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    movieList.clear();
+                    movieList.addAll(response.body());
+
+                    filteredList.clear();
+                    filteredList.addAll(movieList);
+
+                    movieAdapter.notifyDataSetChanged();
+
+                    recyclerView.setVisibility(View.VISIBLE);
+                    textResultCount.setVisibility(View.VISIBLE);
+                    updateResultCount();
+                } else {
+                    Toast.makeText(requireContext(), "Gagal memuat data film", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                Toast.makeText(requireContext(), "Gagal memuat film: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
