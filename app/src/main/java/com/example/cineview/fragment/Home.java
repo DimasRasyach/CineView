@@ -44,6 +44,8 @@ import retrofit2.Response;
 public class Home extends Fragment {
 
     private RecyclerView recyclerView;
+    public ApiService apiService;
+    public Call<UserModel> call;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,29 +65,55 @@ public class Home extends Fragment {
         fetchUserData(usernameTextView);
 
         ViewPager2 viewPager2 = view.findViewById(R.id.imageSlider);
+        List<MovieItem> imageSliderMovies = new ArrayList<>();
+        ImageSliderAdapter sliderAdapter = new ImageSliderAdapter(getContext(), imageSliderMovies);
+        viewPager2.setAdapter(sliderAdapter);
 
-        List<Integer> images = Arrays.asList(
-                R.drawable.gambar1,
-                R.drawable.gambar2,
-                R.drawable.gambar3
-        );
-
-        ImageSliderAdapter adapter = new ImageSliderAdapter(images);
-
-        viewPager2.setAdapter(adapter);
-
-        Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
+        // Panggil API
+        apiService = ApiClient.getRetrofit().create(ApiService.class);
+        Call<List<MovieItem>> call = apiService.getAllMovies();
+        call.enqueue(new Callback<List<MovieItem>>() {
             @Override
-            public void run() {
-                int currentItem = viewPager2.getCurrentItem();
-                int totalItem = adapter.getItemCount();
-                int nextItem = (currentItem + 1) % totalItem;
-                viewPager2.setCurrentItem(nextItem, true);
-                handler.postDelayed(this, 5000);
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<MovieItem> moviesFromApi = response.body();
+
+                    // Ambil maksimal 3 film
+                    List<MovieItem> top3 = moviesFromApi.subList(0, Math.min(3, moviesFromApi.size()));
+
+                    imageSliderMovies.clear();
+                    imageSliderMovies.addAll(top3);
+                    sliderAdapter.notifyDataSetChanged();
+
+                    if (imageSliderMovies.size() > 1) {
+                        Handler handler = new Handler();
+                        Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                int totalItem = sliderAdapter.getItemCount();
+                                if (totalItem == 0) return;
+
+                                int currentItem = viewPager2.getCurrentItem();
+                                int nextItem = (currentItem + 1) % totalItem;
+                                viewPager2.setCurrentItem(nextItem, true);
+                                handler.postDelayed(this, 5000);
+                            }
+                        };
+                        handler.postDelayed(runnable, 5000);
+                    }
+                }
             }
-        };
-        handler.postDelayed(runnable, 5000);
+
+            @Override
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed to load slider movies", Toast.LENGTH_SHORT).show();
+            }
+        });
+//        (
+//                R.drawable.gambar1,
+//                R.drawable.gambar2,
+//                R.drawable.gambar3
+//        );
 
         recyclerView = view.findViewById(R.id.topRatingRecycler);
 
@@ -117,8 +145,8 @@ public class Home extends Fragment {
         trendRecycler.addItemDecoration(new GridSpacingItemDecoration(2, 24, true));
         trendRecycler.setAdapter(trendAdapter);
 
-        ApiService apiService = ApiClient.getRetrofit().create(ApiService.class);
-        Call<List<MovieItem>> call = apiService.getAllMovies();
+        apiService = ApiClient.getRetrofit().create(ApiService.class);
+        call = apiService.getAllMovies();
         call.enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
@@ -147,7 +175,7 @@ public class Home extends Fragment {
             return;
         }
 
-        ApiService apiService = ApiClient.getRetrofit().create(ApiService.class);
+        apiService = ApiClient.getRetrofit().create(ApiService.class);
         Call<UserModel> call = apiService.getUserProfile("Bearer " + authToken);
 
         call.enqueue(new Callback<UserModel>() {
