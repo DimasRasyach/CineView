@@ -109,28 +109,25 @@ public class Home extends Fragment {
                 Toast.makeText(getContext(), "Failed to load slider movies", Toast.LENGTH_SHORT).show();
             }
         });
-//        (
-//                R.drawable.gambar1,
-//                R.drawable.gambar2,
-//                R.drawable.gambar3
-//        );
 
         recyclerView = view.findViewById(R.id.topRatingRecycler);
 
-        List<TopRatingModel> list = new ArrayList<>();
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 1"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 2"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 3"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 4"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 5"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 6"));
-        list.add(new TopRatingModel(R.drawable.foto, "FILM 7"));
+        List<MovieItem> topRatedMovies = new ArrayList<>();
+
+//        List<TopRatingModel> list = new ArrayList<>();
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 1"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 2"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 3"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 4"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 5"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 6"));
+//        list.add(new TopRatingModel(R.drawable.foto, "FILM 7"));
 
 
-        TopRatingAdapter adapter2 = new TopRatingAdapter(list);
+        TopRatingAdapter topRatingAdapter = new TopRatingAdapter(getContext(), topRatedMovies);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter2);
+        recyclerView.setAdapter(topRatingAdapter);
 
         RecyclerView trendRecycler = view.findViewById(R.id.recommendedRecycler);
         List<MovieItem> trendMovies = new ArrayList<>();
