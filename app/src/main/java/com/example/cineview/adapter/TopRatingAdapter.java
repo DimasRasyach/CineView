@@ -1,6 +1,5 @@
 package com.example.cineview.adapter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,9 +23,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.ViewHolder> {
 
-    private Context context;
     private List<MovieItem> movieList;
-    public TopRatingAdapter(Context context, List<MovieItem> movieList) {
+
+    public TopRatingAdapter(List<MovieItem> movieList) {
         this.movieList = movieList;
     }
 
@@ -51,13 +50,15 @@ public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MovieItem movie = movieList.get(position);
-        Glide.with(holder.imageProfile.getContext())
+        holder.title.setText(movie.getTitle());
+        Glide.with(holder.itemView.getContext())
                 .load(movie.getPosterUrl())
                 .placeholder(R.drawable.placeholder)
+                .centerCrop()
                 .into(holder.imageProfile);
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), DetailFilm.class);
+            Intent intent = new Intent(holder.itemView.getContext(), DetailFilm.class);
             intent.putExtra("title", movie.getTitle());
             intent.putExtra("description", movie.getDescription());
             intent.putExtra("releaseYear", movie.getReleaseYear());
@@ -69,12 +70,9 @@ public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.View
 
             ArrayList<String> genreList = new ArrayList<>(movie.getGenre());
             intent.putStringArrayListExtra("genre", genreList);
-            v.getContext().startActivity(intent);
+            holder.itemView.getContext().startActivity(intent);
         });
     }
-    //        TopRatingModel item = movieList.get(position);
-//        holder.imageProfile.setImageResource(item.getImageResId());
-//        holder.title.setText(item.getTitle());
 
     @Override
     public int getItemCount() {

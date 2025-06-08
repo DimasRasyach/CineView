@@ -46,6 +46,8 @@ public class Home extends Fragment {
     private RecyclerView recyclerView;
     public ApiService apiService;
     public Call<UserModel> call;
+    private TopRatingAdapter topRatingAdapter;
+    private List<TopRatingModel> topRatingList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,10 +113,11 @@ public class Home extends Fragment {
         });
 
         recyclerView = view.findViewById(R.id.topRatingRecycler);
-
-        List<MovieItem> topRatedMovies = new ArrayList<>();
-
-//        List<TopRatingModel> list = new ArrayList<>();
+        List<MovieItem> list = new ArrayList<>();
+        TopRatingAdapter adapter2 = new TopRatingAdapter(list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter2);
 //        list.add(new TopRatingModel(R.drawable.foto, "FILM 1"));
 //        list.add(new TopRatingModel(R.drawable.foto, "FILM 2"));
 //        list.add(new TopRatingModel(R.drawable.foto, "FILM 3"));
@@ -123,11 +126,25 @@ public class Home extends Fragment {
 //        list.add(new TopRatingModel(R.drawable.foto, "FILM 6"));
 //        list.add(new TopRatingModel(R.drawable.foto, "FILM 7"));
 
+        apiService.getTopRatedMovies().enqueue(new Callback<List<MovieItem>>() {
+            @Override
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    list.clear();
+                    list.addAll(response.body());
+                    adapter2.notifyDataSetChanged();
+                }
+            }
 
-        TopRatingAdapter topRatingAdapter = new TopRatingAdapter(getContext(), topRatedMovies);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(topRatingAdapter);
+            @Override
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed to load top rated movies", Toast.LENGTH_SHORT).show();
+                Log.e("TopRatedError", "onFailure: Gagal memuat daftar top-rated film.", t);
+            }
+        });
+
+
+        // -- RECOMMENDED RECYCLER -- //
 
         RecyclerView trendRecycler = view.findViewById(R.id.recommendedRecycler);
         List<MovieItem> trendMovies = new ArrayList<>();
