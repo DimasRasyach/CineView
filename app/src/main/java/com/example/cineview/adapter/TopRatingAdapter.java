@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.cineview.Activities.detailfilm;
+import com.example.cineview.Activities.DetailFilm;
 import com.example.cineview.R;
 import com.example.cineview.models.TopRatingModel;
 
@@ -53,7 +53,7 @@ public class TopRatingAdapter extends RecyclerView.Adapter<TopRatingAdapter.View
         holder.title.setText(item.getTitle());
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, detailfilm.class);
+            Intent intent = new Intent(context, DetailFilm.class);
             intent.putExtra("MOVIE_TITLE", item.getTitle()); 
             context.startActivity(intent);
 

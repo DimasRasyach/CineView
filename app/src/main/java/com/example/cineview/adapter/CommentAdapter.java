@@ -8,8 +8,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.cineview.R;
 import com.example.cineview.models.Comment;
+import com.example.cineview.models.UserModel;
 
 import java.util.List;
 
@@ -34,10 +36,19 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
-        Comment comment = commentList.get(position);
-        holder.usernameTextView.setText(comment.getUsername());
-        holder.commentTextView.setText(comment.getCommentText());
-        holder.profileImage.setImageResource(comment.getProfileImageResId());
+        Comment currentComment = commentList.get(position);
+        holder.commentTextView.setText(currentComment.getText());
+        UserModel user = currentComment.getUser();
+        if (user!= null && user.getUsername() != null) {
+            holder.usernameTextView.setText(user.getUsername());
+        } else {
+            holder.usernameTextView.setText("Username");
+        }
+        // Load image from URL using Glide or Picasso
+        Glide.with(context)
+                .load(currentComment.getProfileimageUrl())
+                .placeholder(R.drawable.foto) // default image if null
+                .into(holder.profileImage);
     }
 
     @Override
