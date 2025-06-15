@@ -131,6 +131,7 @@ public class Home extends Fragment {
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
                 Toast.makeText(getContext(), "Failed to load slider movies", Toast.LENGTH_SHORT).show();
+                Log.e("SliderMoviesError", "onFailure: Gagal memuat daftar top-rated film.", t);
                 hideLoading();
             }
         });

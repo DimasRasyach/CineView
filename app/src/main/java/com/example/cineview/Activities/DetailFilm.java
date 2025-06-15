@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -19,6 +20,10 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,7 +40,6 @@ import com.example.cineview.models.CommentResponse;
 import com.example.cineview.models.FavoriteMoviesResponse;
 import com.example.cineview.models.MovieIdRequest;
 import com.example.cineview.models.MovieItem;
-import com.example.cineview.models.RatingData;
 import com.example.cineview.models.RatingRequest;
 import com.example.cineview.models.RatingResponse;
 import com.example.cineview.models.UserModel;
@@ -102,6 +106,13 @@ public class DetailFilm extends AppCompatActivity {
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.detailfilm), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+
         // Intent data
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
@@ -109,6 +120,7 @@ public class DetailFilm extends AppCompatActivity {
         int year = intent.getIntExtra("releaseYear", 0);
         String category = intent.getStringExtra("category");
         double rating = intent.getDoubleExtra("averageRating", 0.0);
+        String formattedRating = String.format("%.1f", rating); // Format ke 1 desimal
         String poster = intent.getStringExtra("posterUrl");
         ArrayList<String> genres = intent.getStringArrayListExtra("genre");
         if (genres == null) genres = new ArrayList<>();
@@ -118,7 +130,7 @@ public class DetailFilm extends AppCompatActivity {
         descText.setText(description);
         yearText.setText("Tahun: " + year);
         categoryText.setText("Kategori: " + category);
-        ratingText.setText("Rating: " + rating + " / 5");
+        ratingText.setText("Rating: " + formattedRating + " / 5");
         Glide.with(this).load(poster).into(posterImage);
 
 
@@ -136,8 +148,22 @@ public class DetailFilm extends AppCompatActivity {
             checkIfUserAlreadyRated(movieId, userId);
         }
 
-        MaterialButton favoriteButton = findViewById(R.id.favoriteButton);
+        NestedScrollView scrollView = findViewById(R.id.detailfilm);
+        View ratingSection = findViewById(R.id.ratingSection);
+        View commentSection = findViewById(R.id.commentInputSection);
 
+        MaterialButton ratingButton = findViewById(R.id.ratingButton);
+        MaterialButton commentButton = findViewById(R.id.commentButton);
+
+        ratingButton.setOnClickListener(v -> {
+            scrollView.post(() -> scrollView.smoothScrollTo(0, ratingSection.getTop()));
+        });
+
+        commentButton.setOnClickListener(v -> {
+            scrollView.post(() -> scrollView.smoothScrollTo(0, commentSection.getTop()));
+        });
+
+        MaterialButton favoriteButton = findViewById(R.id.favoriteButton);
 
         favoriteButton.setOnClickListener(v -> {
             isFavorited = !isFavorited;
@@ -181,7 +207,6 @@ public class DetailFilm extends AppCompatActivity {
                 Log.e("DetailFilm", "onFailure", t);
             }
         });
-
 
 
         commentEditText.setOnEditorActionListener((v, actionId, event) -> {
@@ -341,9 +366,6 @@ public class DetailFilm extends AppCompatActivity {
                         selectedRating = userRating;
                         updateStarUI(userRating);  // Update tampilan bintang sesuai rating user
                         currentRatingText.setText(String.valueOf(userRating));
-                        Toast.makeText(DetailFilm.this, "Rating yang sudah kamu beri: " + userRating, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(DetailFilm.this, "Kamu belum memberi rating", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

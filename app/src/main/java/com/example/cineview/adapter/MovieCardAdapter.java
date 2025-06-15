@@ -41,7 +41,8 @@ public class MovieCardAdapter extends RecyclerView.Adapter<MovieCardAdapter.Movi
         MovieItem movie = movieList.get(position);
 
         holder.textTitle.setText(movie.getTitle());
-        holder.textRatingValue.setText(String.valueOf(movie.getAverageRating()));
+        String formattedRating = String.format("%.1f", movie.getAverageRating());
+        holder.textRatingValue.setText(formattedRating);
         // contoh load gambar pakai Glide/Picasso
         Glide.with(context).load(movie.getPosterUrl()).into(holder.imagePoster);
 

@@ -38,7 +38,7 @@ public interface ApiService {
     Call<UserModel> getUserProfile(@Header("Authorization") String authHeader);
 
     // Get Movies by list id
-    @GET("api/movies") // karena base_url + movies sesuai router backend
+    @GET("api/movies/all") // karena base_url + movies sesuai router backend
     Call<List<MovieItem>> getAllMovies();
 
     @GET("api/movies/{id}")
